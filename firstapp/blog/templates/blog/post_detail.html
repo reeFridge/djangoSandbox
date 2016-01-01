@@ -1,0 +1,90 @@
+{% extends 'blog/base.html' %}
+{% load comments %}
+{% block jquery %}
+     $('[data-toggle="tooltip"]').tooltip();
+
+    $('#like').click(function(){
+      $.ajax({
+               type: "POST",
+               url: "{% url 'blog:like' %}",
+               data: {'slug': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               dataType: "json",
+               success: function(response) {
+                      console.log(response.message);
+                      console.log('Post likes count is now ' + response.likes_count);
+                      console.log(response.liked);
+                      $('#like').toggleClass("active btn-primary",response.liked);
+                      $('#like').toggleClass("btn-default",!response.liked);
+                      if (response.liked){
+                         $('#like').html("<i class='glyphicon glyphicon-heart'></i> Нравится <span class='badge'>" + response.likes_count + "</span>");
+                        }else{
+                          $('#like').html("<i class='glyphicon glyphicon-heart-empty'></i> Нравится <span class='badge'>" + response.likes_count + "</span>");
+                        }
+                },
+                error: function(rs, e) {
+                       console.log(rs.responseText);
+                }
+          });
+    })
+{% endblock %}
+{% block content %}
+<h3>{{ post.title }} <p><small><i class="glyphicon glyphicon-user"></i> {{ post.author }} | <i class="glyphicon glyphicon-calendar"></i> {{ post.datetime|date:"j N" }} | <i class="glyphicon glyphicon-time"></i> {{ post.datetime|date:"G:i" }}</small></p></h3>
+    <div class="well container-fluid">{{ post.content }}</div>
+    {% if user.is_authenticated %}
+    <button class="{% if liked %} active btn-primary {% endif %}btn{% if not liked %} btn-default{% endif %}" type="button" id="like" name="{{ post.slug }}" value="Like">
+        <i class="glyphicon glyphicon-heart{% if not liked %}-empty{% endif %}"></i> Нравится <span class="badge">{{ post.get_likes_count }}</span>
+    </button>
+    {% endif %}
+    <hr>
+    {% get_comment_count for post as comment_count %}
+    <p><i class="glyphicon glyphicon-comment"></i> {{ comment_count }} коммент. </p>
+    {% if user.is_authenticated %}
+        {% get_comment_form for post as form %}
+        <form action="{% comment_form_target %}" method="post">
+            {% csrf_token %}
+            <fieldset>
+                <div class="form-group">
+                    <textarea class="form-control" name="comment" id="id_comment" maxlength="3000" rows="3"></textarea>
+                </div>
+                <input id="id_honeypot" style="display: none;" name="honeypot" type="text">
+                    {{ form.content_type }}
+                    {{ form.object_pk }}
+                    {{ form.timestamp }}
+                    {{ form.security_hash }}
+                <div class="pull-right form-group">
+                   <div class="btn-group">
+                        <button type="submit" name="submit" class="btn btn-default">Отправить</button>
+                        <button type="submit" name="preview" class="btn btn-default">Предпросмотр</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    {% else %}
+    <div class="alert alert-warning">
+        <strong>Пожалуйста <a href="{% url 'auth_login' %}" class="btn btn-default btn-sm">авторизуйтесь</a> или <a href="{% url 'registration_register' %}" class="btn btn-default btn-sm">зарегистрируйтесь</a> , чтобы комментировать данную статью.</strong>
+    </div>
+    {% endif %}
+    {% get_comment_list for post as comment_list %}
+    {% for comment in comment_list %}
+       <div class="media">
+          <a name="c{{ comment.id }}"></a>
+            <a class="pull-left">
+                <img class="media-object img-rounded" style="width: 64px; height: 64px" src="{{ comment.user.userprofile.avatar }}" alt="img">
+            </a>
+            <div class="media-body">
+               <div class="panel panel-default">
+               <div class="panel-heading">
+                   <h4 class="panel-title"><strong>{{ comment.user_name }}</strong> <small>{{ comment.submit_date }}</small>
+                   <a href="http://{{ request.META.HTTP_HOST }}{% get_comment_permalink comment %}" class="pull-right" >
+                               <i class="glyphicon glyphicon-link"></i>
+                    </a>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                <p>{{ comment.comment }}</p>
+                </div>
+            </div>
+       </div>
+       </div>
+    {% endfor %}
+{% endblock %}

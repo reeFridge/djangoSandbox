@@ -1,0 +1,16 @@
+{% extends 'fridgeroom/base.html' %}
+{% block content %}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <strong>{{ pub.title }}</strong>  
+        </div>
+        <div class="panel-body">
+          <p>{{ post.content }}</p>
+        </div>
+        <div class="panel-footer">
+          <span class="pull-right">
+            <strong>{{ pub.datetime }}</strong>
+          </span>
+        </div>
+      </div>
+{% endblock %}

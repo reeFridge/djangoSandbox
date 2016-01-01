@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+{% include "novels/head.html" %}
+<script type="text/javascript">
+        $(function(){
+        {% block jquery %}
+        {% endblock %}
+        });
+</script>    
+</head>
+<body>
+{% include "novels/nav.html" %}
+{% block content %}
+
+{% endblock %}
+</body>
+</html>

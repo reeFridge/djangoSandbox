@@ -1,0 +1,120 @@
+{% extends 'novels/base.html' %}
+{% block jquery %}     
+   
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="container">
+       <div class="panel panel-default">
+               <div class="text-center panel-heading">
+                   <h4><strong>{{ issue.tit.title }}:</strong> #{{ issue.number }} / <strong>{{ issue.tit.orig_title }}:</strong> #{{ issue.number }}</h4>
+                </div>
+                <div class="panel-body">
+                   <div class="text-center">
+                        <ul class="pagination btn-group">
+                            {% if page_obj.has_previous %}
+                            <li>
+                                <a href="{% url 'novels:ReadStrip' issue.tit.slug issue.slug page_obj.previous_page_number %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Пред.</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="disabled">
+                                <a href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Пред.</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    Страница: {{ page_obj.number }} из {{ page_obj.paginator.count }} 
+                                    <span class="caret"></span>
+                                  </button>
+                                <ul class="dropdown-menu">
+                                  {% for page in page_obj.paginator.page_range %}
+                                      {% if forloop.counter == page_obj.number %}
+                                        <li class="active"><a href="#">{{ forloop.counter }}<span class="sr-only">(current)</span></a></li>
+                                        
+                                {% else %}
+                                      <li><a href="{% url 'novels:ReadStrip' issue.tit.slug issue.slug forloop.counter %}">{{ forloop.counter }}</a></li>
+                                      {% endif %}
+                                   {% endfor %}
+                                </ul>
+                            </div>
+                            {% if page_obj.has_next %}
+                            <li>
+                                <a href="{% url 'novels:ReadStrip' issue.tit.slug issue.slug page_obj.next_page_number %}" aria-label="Next">
+                                    <span aria-hidden="true">След. &raquo;</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="disabled">
+                                <a href="#" aria-label="Next">
+                                    <span aria-hidden="true">След. &raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% for strip in object_list %}
+                        <div class="text-center">
+                            <a href="{% if page_obj.has_next %}{% url 'novels:ReadStrip' issue.tit.slug issue.slug page_obj.next_page_number %}{% else %}#{% endif %}">
+                                <img src="{{ strip.get_abs_url }}" style="width:100%; height:100%;" alt="">
+                            </a>
+                        </div>
+                    {% endfor %}
+                    <hr>
+                    <div class="progress progress-striped">
+                      <div class="progress-bar" role="progressbar" aria-valuenow="{{ page_obj.number }}" aria-valuemin="1" aria-valuemax="{{ page_obj.paginator.count }}" style="width: {{ progress }}%;">
+                        {{ progress }}%
+                      </div>
+                    </div>
+                    <div class="text-center">
+                        <ul class="pagination">
+                           <li>
+                            <a href="{% url 'novels:ReadStrip' issue.tit.slug issue.slug 1 %}" aria-label="Next">
+                                    <span aria-hidden="true">Первая</span>
+                            </a>
+                            </li>
+                            {% if page_obj.has_previous %}
+                            <li>
+                                <a href="{% url 'novels:ReadStrip' issue.tit.slug issue.slug page_obj.previous_page_number %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Пред.</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="disabled">
+                                <a href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Пред.</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% if page_obj.has_next %}
+                            <li>
+                                <a href="{% url 'novels:ReadStrip' issue.tit.slug issue.slug page_obj.next_page_number %}" aria-label="Next">
+                                    <span aria-hidden="true">След. &raquo;</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="disabled">
+                                <a href="#" aria-label="Next">
+                                    <span aria-hidden="true">След &raquo;</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li>
+                            <a href="{% url 'novels:ReadStrip' issue.tit.slug issue.slug page_obj.paginator.count %}" aria-label="Next">
+                                    <span aria-hidden="true">Последняя</span>
+                            </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+           </div>
+       </div>
+    </div>
+</div>
+
+{% endblock %}

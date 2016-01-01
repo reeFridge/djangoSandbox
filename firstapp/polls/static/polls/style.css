@@ -1,0 +1,8 @@
+body {
+  background: url('images/djlogo.png') no-repeat right bottom;
+  background-size: 150px 150px;
+}
+
+li a{
+  color: green;
+}

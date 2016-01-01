@@ -1,0 +1,41 @@
+{% extends 'novels/base.html' %}
+{% block content %}
+<div class="container">
+<div class="row">
+    {% for title in object_list %}
+    <div class="col-sm-6 col-md-6 col-lg-4" style="">
+       <div class="panel panel-default">
+       <div class="panel-heading text-center">
+           <strong>{{ title.title }}</strong><br><small>{{ title.orig_title }}</small>
+       </div>
+       <div class="panel-body">
+        <div class="media">
+            <a class="pull-left" href="{% url 'novels:TitleDetail' title.slug %}">
+                <img class="media-object img-rounded" style="width:130px; height:200px;" src="{{ title.imgUrl }}" alt="{{ title.title }} Pic">
+            </a>
+            <div class="media-body">
+                <ul class="list-group">
+                   <li class="list-object"><strong>Издатель:</strong><p>
+                        <a href="{% url 'novels:PublisherDetail' title.publisher.slug %}">{{ title.publisher.pub_title }}</a>
+                        </p>
+                    </li>
+                    <li class="list-object"><strong>Жанр:</strong><p>
+                        {% for genre in title.genre.all %}{% if forloop.first %}{{ genre.name }}{% endif %}{% endfor %}
+                        </p>
+                    </li>
+                    <li class="list-object"><strong>Статус:</strong><p>
+                        {{ title.status }}
+                        </p>
+                    </li>
+                </ul>
+            </div>            
+        </div>
+        
+        </div>
+        <div class="panel-footer"><a href="{% url 'novels:TitleDetail' title.slug %}" class="btn btn-default text-center btn-block">Подробнее <i class="glyphicon glyphicon-menu-hamburger"></i></a></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+{% include "blog/head.html" %}
+<script type="text/javascript">
+        $(function(){
+        {% block jquery %}
+        {% endblock %}
+        });
+</script>
+</head>
+<body>
+{% include "blog/nav.html" %}
+<div class="container">
+	<div class="row">
+		<!-- maincontainer -->
+       <div class="container-fluid">
+        <div class="panel panel-default">
+                       <div class="panel-body">
+                       {% if user.is_authenticated %}
+                           <img class="img-rounded" style="width: 64px; height: 64px" src="{{ user.userprofile.avatar }}" alt="img">
+                           <strong> Вы авторизованы как: {{ user.username }} </strong>
+                           <a href="{% url 'auth_logout' %}">(Выйти)</a>
+
+                       {% else %}
+     			{% block auth_block %}{% endblock %}
+     			{% endif %}
+     			</div>
+        </div>
+        </div>
+    </div><!-- row -->
+</div> <!-- container -->
+
+</body>
+</html>

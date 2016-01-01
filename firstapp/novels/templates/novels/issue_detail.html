@@ -1,0 +1,65 @@
+{% extends 'novels/base.html' %}
+{% block jquery %}     
+    
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="container">
+       <div class="panel panel-default">
+               <div class="panel-heading">
+                   <h4><strong>{{ issue.tit.title }}:</strong> #{{ issue.number }} / <strong>{{ issue.tit.orig_title }}:</strong> #{{ issue.number }}</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="col-lg-3 col-md-4 col-sm-5">
+                           <div class="thumbnail"><img style="width:246px; height:380px;" src="{% for strip in strips %}{% if forloop.first %}{{ strip.get_abs_url }}{% endif %}{% endfor %}" class="img-rounded" alt=""></div>
+                           <a href="{% url 'novels:ReadStrip' issue.tit.slug issue.slug 1 %}" class="btn btn-default btn-block text-center"><i class="glyphicon glyphicon-eye-open"></i> Читать онлайн</a> 
+                           <a href="{% url 'novels:Download_Issue' issue.id %}" class="btn btn-primary btn-block text-center"><i class="glyphicon glyphicon-save"></i> Скачать выпуск</a>                      
+                    </div>
+                    <div class="col-lg-9 col-md-8 col-sm-7">
+                        <h4><strong>Всего страниц: </strong><small>{{ strips_count }}</small></h4> 
+                          <div class="panel-group" id="accordion">
+                              <div class="panel panel-default">
+                                <div class="panel-heading">
+                                  <h4 class="panel-title">
+                                          <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                            <strong>Примеры страниц:</strong>
+                                          </a>
+                                        </h4>
+                                </div>
+                                <div id="collapseOne" class="panel-collapse collapse">
+                                  <div class="panel-body text-center">
+                                    
+                               {% for strip in strips %}
+                                  {% if not forloop.first %}
+                                   <a data-toggle="modal" data-target=".modalPic-{{ strip.num }}"><img style="width:120px; height:190px;" src="{{ strip.get_abs_url }}" class="img-rounded" alt=""></a>
+                                   
+                               <div class="modal fade modalPic-{{ strip.num }}" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                            <h4 class="modal-title" id="mySmallModalLabel">Изображение<a class="anchorjs-link" href="#mySmallModalLabel"><span class="anchorjs-icon"></span></a></h4>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="{{ strip.get_abs_url }}" style="width:100%; height:100%;" alt="">
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                               </div>
+                                   {% endif %}
+                               {% endfor %}
+                           
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
+                           
+                    </div>
+                </div>
+           </div>
+       </div>
+    </div>
+</div>
+
+{% endblock %}

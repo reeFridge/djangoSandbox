@@ -1,0 +1,67 @@
+{% extends 'novels/base.html' %}
+{% block jquery %}     
+    $('#subscribe').click(function(){
+      $.ajax({
+               type: "POST",
+               url: "{% url 'novels:Sub_to_Pub' %}",
+               data: {'slug': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               dataType: "json",
+               success: function(response) {
+                      console.log(response.message);
+                      console.log('Subs now: ' + response.subs_count);
+                      console.log(response.subscribe);
+                      $('#subscribe').toggleClass("active btn-default",response.subscribe);
+                      $('#subscribe').toggleClass("btn-danger",!response.subscribe);
+                      if (response.subscribe){ 
+                         $('#subscribe').html("<i class='glyphicon glyphicon-minus'></i> Отменить подписку"); 
+                        }else{
+                          $('#subscribe').html("<i class='glyphicon glyphicon-plus'></i> Подписаться");
+                        }
+                },
+                error: function(rs, e) {
+                       console.log(rs.responseText);
+                }
+          }); 
+    })             
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="container">
+       <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="col-lg-4 col-md-4 col-sm-5">
+                           <ul class="list-group">
+                                <li class="list-group-item active text-center">
+                                    <h4><strong>{{ publisher.pub_title }}</strong></h4>
+                                </li>                              
+                               <li class="list-group-item text-center">
+                                   <img class="img-rounded" src="{{ publisher.imgUrl }}" style="width: 150px; height: 150px;" alt="{{ publisher.pub_title }} Picture">
+                                </li>
+                               <li class="list-group-item"><strong>Основано:</strong><span class="pull-right">{{ publisher.found }} г.</span></li>
+                               <li class="list-group-item"><strong>Веб-сайт:</strong><a class="pull-right" href="{{ publisher.website }}">{{ publisher.website }}</a><div class="clearfix"></div></li>
+                               <li class="list-group-item"><strong>Twitter:</strong><a class="pull-right" href="{{ publisher.twitter }}">@{{ publisher.abbrev }}</a></li>
+                               <li class="list-group-item"><strong>Аббревиатура:</strong><span class="pull-right">{{ publisher.abbrev }}</span></li>
+                               <li class="list-group-item"><strong>Страна:</strong><span class="pull-right">{{ publisher.country }}</span></li>
+                               <li class="list-group-item"><strong>Кол-во подписчиков:</strong><span class="pull-right">{{ publisher.get_subs_count }}</span></li>
+                               <li class="list-group-item"><strong>Импринт:</strong><span class="pull-right">{% if publisher.imprint_of %}Да{% else %}Нет{% endif %}</span></li>
+                           </ul>
+                           {% if user.is_authenticated %}
+                           <button type="button" id="subscribe" name="{{ publisher.slug }}"  class="btn {% if subed %}btn-default active{% else %}btn-danger{% endif %} text-center btn-block"><i class="glyphicon glyphicon-{% if not subed %}plus{% else %}minus{% endif %}"></i> {% if not subed %}Подписаться{% else %}Отменить подписку{% endif %}</button>
+                           {% else %}
+                            <div class="alert alert-warning">
+        <strong><a href="{% url 'auth_login' %}">Авторизуйтесь</a> или <a href="{% url 'registration_register' %}" > зарегистрируйтесь</a>, чтобы подписаться на обновления.</strong>
+    </div>
+                            {% endif %}
+                    </div>
+                    <div class="col-lg-8 col-md-8 col-sm-7">
+                       <h4><strong>Информация об издателе:</strong></h4>
+                        <p>{{ publisher.desc }}</p>
+                    </div>
+                </div>
+           </div>
+       </div>
+    </div>
+</div>
+
+{% endblock %}

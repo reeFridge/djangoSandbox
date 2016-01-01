@@ -1,0 +1,18 @@
+{% extends 'novels/base.html' %}
+{% block content %}
+<div class="container">
+<div class="row">
+ {% for publisher in object_list %}
+ <div class="col-xs-6 col-sm-3 col-md-3 col-lg-2">
+  <div class="thumbnail" style="height: 220px;">
+          <a href="{% url 'novels:PublisherDetail' publisher.slug %}"><img class="img-rounded" src="{{ publisher.imgUrl }}" style="width: 150px; height: 150px;" alt="{{ publisher.pub_title }} Picture"></a>
+      <div class="caption text-center">
+          <strong>{{ publisher.pub_title }}</strong>
+          <p>{{ publisher.found|date:"Y" }} г.</p>
+    </div>
+  </div>
+  </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock %}
